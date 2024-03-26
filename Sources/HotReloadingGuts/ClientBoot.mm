@@ -131,7 +131,7 @@ extern "C" {
 #if TARGET_IPHONE_SIMULATOR || TARGET_OS_OSX
     BOOL usingInjectPackage = dlsym(RTLD_DEFAULT, "$s6Inject17InjectionObserverCN") != nullptr;
     if ((usingInjectPackage || getenv("INJECTION_DAEMON")) &&
-        !getenv("INJECTION_STANDALONE")) {
+        !true /*!getenv("INJECTION_STANDALONE")*/) {
         if (usingInjectPackage)
         printf(APP_PREFIX"Not falling back to standalone HotReloading as you are using the ‘Inject’ package. "
                "Use MenuBar app to control Injection status or opt in by using INJECTION_STANDALONE env var.\n");
