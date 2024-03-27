@@ -114,7 +114,7 @@ class StandaloneInjection: InjectionClient {
                     return
                 }
             }
-
+            NotificationCenter.default.post(name: Notification.Name("INJECTION_BEGIN_NOTIFICATION"), object: nil)
             for changed in filesChanged {
                 guard let changed = changed as? String,
                       !changed.hasPrefix(library) && !changed.contains("/."),
@@ -135,6 +135,7 @@ class StandaloneInjection: InjectionClient {
                 }
                 lastInjected[changed] = Date.timeIntervalSinceReferenceDate
             }
+            NotificationCenter.default.post(name: Notification.Name("INJECTION_BUNDLE_NOTIFICATION"), object: nil)
         }, runLoop: isVapor ? CFRunLoopGetCurrent() : nil))
 
         log("Standalone \(APP_NAME) available for sources under \(dirs)")

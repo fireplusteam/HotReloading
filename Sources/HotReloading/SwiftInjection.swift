@@ -357,7 +357,7 @@ public class SwiftInjection: NSObject {
             performSweep(oldClasses: sweepClasses, tmpfile,
                 getenv(INJECTION_OF_GENERICS) != nil ? injectedGenerics : [])
 
-            NotificationCenter.default.post(name: notification, object: sweepClasses)
+            //NotificationCenter.default.post(name: notification, object: sweepClasses)
         }
         }
     }
