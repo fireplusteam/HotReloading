@@ -115,27 +115,29 @@ class StandaloneInjection: InjectionClient {
                 }
             }
             NotificationCenter.default.post(name: Notification.Name("INJECTION_BEGIN_NOTIFICATION"), object: nil)
-            for changed in filesChanged {
-                guard let changed = changed as? String,
-                      !changed.hasPrefix(library) && !changed.contains("/."),
-                      Date.timeIntervalSinceReferenceDate -
-                        lastInjected[changed, default: firstInjected] >
-                        minInterval else {
-                    continue
-                }
-                if changed.hasSuffix(".storyboard") ||
-                    changed.hasSuffix(".xib") {
-                    #if os(iOS) || os(tvOS)
-                    if !NSObject.injectUI(changed) {
-                        self.log("⚠️ Interface injection failed")
+            DispatchQueue.main.async {
+                for changed in filesChanged {
+                    guard let changed = changed as? String,
+                          !changed.hasPrefix(library) && !changed.contains("/."),
+                          Date.timeIntervalSinceReferenceDate -
+                            lastInjected[changed, default: firstInjected] >
+                            minInterval else {
+                        continue
                     }
-                    #endif
-                } else {
-                    SwiftInjection.inject(classNameOrFile: changed)
+                    if changed.hasSuffix(".storyboard") ||
+                        changed.hasSuffix(".xib") {
+                        #if os(iOS) || os(tvOS)
+                        if !NSObject.injectUI(changed) {
+                            self.log("⚠️ Interface injection failed")
+                        }
+                        #endif
+                    } else {
+                        SwiftInjection.inject(classNameOrFile: changed)
+                    }
+                    lastInjected[changed] = Date.timeIntervalSinceReferenceDate
                 }
-                lastInjected[changed] = Date.timeIntervalSinceReferenceDate
+                NotificationCenter.default.post(name: Notification.Name("INJECTION_BUNDLE_NOTIFICATION"), object: nil)
             }
-            NotificationCenter.default.post(name: Notification.Name("INJECTION_BUNDLE_NOTIFICATION"), object: nil)
         }, runLoop: isVapor ? CFRunLoopGetCurrent() : nil))
 
         log("Standalone \(APP_NAME) available for sources under \(dirs)")
