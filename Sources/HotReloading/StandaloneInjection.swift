@@ -115,7 +115,7 @@ class StandaloneInjection: InjectionClient {
                 }
             }
             NotificationCenter.default.post(name: Notification.Name("INJECTION_BEGIN_NOTIFICATION"), object: nil)
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3)) {
                 for changed in filesChanged {
                     guard let changed = changed as? String,
                           !changed.hasPrefix(library) && !changed.contains("/."),
